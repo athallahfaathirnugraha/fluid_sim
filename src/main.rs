@@ -23,10 +23,10 @@ impl MyApp {
 
         for hori in 0..hori_num {
             for vert in 0..vert_num {
-                particles.push(Particle {
-                    x: (hori * spacing) as f32,
-                    y: (vert * spacing) as f32,
-                });
+                particles.push(Particle::new(
+                    (hori * spacing) as f32,
+                    (vert * spacing) as f32,
+                ));
             }
         }
 
@@ -40,7 +40,7 @@ impl eframe::App for MyApp {
            let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
 
            for &particle in &self.particles {
-               painter.circle_filled(pos2(particle.x, particle.y), 2., Color32::BLUE);
+               painter.circle_filled(pos2(particle.pos.x, particle.pos.y), 2., Color32::BLUE);
            }
        });
    }
