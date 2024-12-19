@@ -3,7 +3,25 @@ use egui::*;
 
 use fluid_sim::*;
 
+use std::thread;
+use std::time::Instant;
+
 fn main() {
+    thread::spawn(move || {
+        let dt = 1. / 60.; // seconds
+        let mut now = Instant::now();
+        
+        loop {
+            if now.elapsed().as_secs_f32() < dt {
+                continue;
+            }
+
+            now = Instant::now();
+
+            println!("thread");
+        }
+    });
+    
     let native_options = eframe::NativeOptions::default();
     eframe::run_native("fluid sim", native_options, Box::new(|cc| Ok(Box::new(MyApp::new(cc)))));
 }
