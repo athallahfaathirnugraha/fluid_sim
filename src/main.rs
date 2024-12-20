@@ -42,8 +42,8 @@ impl MyApp {
     fn new() -> MyApp {
         let mut particles = vec![];
 
-        let hori_num = 30;
-        let vert_num = 20;
+        let hori_num = 15;
+        let vert_num = 15;
         let spacing = 10;
 
         for hori in 0..hori_num {
@@ -55,7 +55,11 @@ impl MyApp {
             }
         }
 
-        MyApp { world: Arc::new(Mutex::new(World::new(particles, fluid_sim::Vec2 { x: 400., y: 400. }))) }
+        MyApp { world: Arc::new(Mutex::new(World::new(
+            particles,
+            fluid_sim::Vec2 { x: 400., y: 400. },
+            0.5,
+        ))) }
     }
 }
 

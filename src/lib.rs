@@ -23,6 +23,7 @@ impl Vec2 {
 pub struct Particle {
     pub pos: Vec2,
     pub vel: Vec2,
+    pub forces: Vec2,
 }
 
 impl Particle {
@@ -30,6 +31,7 @@ impl Particle {
         Particle {
             pos: Vec2 { x, y },
             vel: Vec2 { x: 0., y: 0. },
+            forces: Vec2 { x: 0., y: 0. },
         }
     }
 }
