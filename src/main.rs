@@ -8,17 +8,19 @@ use std::time::Instant;
 
 fn main() {
     thread::spawn(move || {
-        let dt = 1. / 60.; // seconds
+        let dt = 1.; // seconds
         let mut now = Instant::now();
+
+        let mut accum = 0.;
         
         loop {
-            if now.elapsed().as_secs_f32() < dt {
-                continue;
-            }
-
+            accum += now.elapsed().as_secs_f32();
             now = Instant::now();
 
-            println!("thread");
+            while accum >= dt {
+                println!("step");
+                accum -= dt;
+            }
         }
     });
     
