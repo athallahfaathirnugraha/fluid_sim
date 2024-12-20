@@ -8,6 +8,17 @@ pub struct Vec2 {
     pub y: f32,
 }
 
+impl Vec2 {
+    pub fn dist(self) -> f32 {
+        (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    pub fn normalize(self) -> Vec2 {
+        let dist = self.dist();
+        Vec2 { x: self.x / dist, y: self.y / dist }
+    }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
     pub pos: Vec2,
