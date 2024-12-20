@@ -1,3 +1,7 @@
+pub mod world;
+
+pub use world::*;
+
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
     pub x: f32,

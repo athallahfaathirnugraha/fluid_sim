@@ -5,10 +5,14 @@ use fluid_sim::*;
 
 use std::thread;
 use std::time::Instant;
+use std::sync::*;
 
 fn main() {
+    let app = MyApp::new();
+    let world_arc = Arc::clone(&app.world);
+
     thread::spawn(move || {
-        let dt = 1.; // seconds
+        let dt = 1. / 60.; // seconds
         let mut now = Instant::now();
 
         let mut accum = 0.;
@@ -18,23 +22,24 @@ fn main() {
             now = Instant::now();
 
             while accum >= dt {
-                println!("step");
+                let mut world = world_arc.lock().unwrap();
+                world.step(dt);
+
                 accum -= dt;
             }
         }
     });
     
     let native_options = eframe::NativeOptions::default();
-    eframe::run_native("fluid sim", native_options, Box::new(|cc| Ok(Box::new(MyApp::new(cc)))));
+    eframe::run_native("fluid sim", native_options, Box::new(|cc| Ok(Box::new(app))));
 }
 
-#[derive(Default)]
 struct MyApp {
-    particles: Vec<Particle>,
+    world: Arc<Mutex<World>>,
 }
 
 impl MyApp {
-    fn new(cc: &eframe::CreationContext<'_>) -> MyApp {
+    fn new() -> MyApp {
         let mut particles = vec![];
 
         let hori_num = 30;
@@ -50,18 +55,22 @@ impl MyApp {
             }
         }
 
-        MyApp { particles }
+        MyApp { world: Arc::new(Mutex::new(World::new(particles, fluid_sim::Vec2 { x: 400., y: 400. }))) }
     }
 }
 
 impl eframe::App for MyApp {
    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+       let world = self.world.lock().unwrap();
+       
        egui::CentralPanel::default().show(ctx, |ui| {
            let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
 
-           for &particle in &self.particles {
+           for &particle in world.particles() {
                painter.circle_filled(pos2(particle.pos.x, particle.pos.y), 2., Color32::BLUE);
            }
        });
+
+       ctx.request_repaint();
    }
 }
