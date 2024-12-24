@@ -19,39 +19,6 @@ impl World {
     /// Assumes that `dt` will stay constant.
     pub fn step(&mut self, dt: f32) {
         let gravity = 60. * 14.;
-
-        for i in 0..self.particles.len() {
-            for j in 0..self.particles.len() {
-                if i == j {
-                    continue;
-                }
-
-                let particle = self.particles[i];
-                let other_particle = self.particles[j];
-
-                let diff = Vec2 {
-                    x: particle.pos.x - other_particle.pos.x,
-                    y: particle.pos.y - other_particle.pos.y,
-                };
-
-                let dist = diff.dist();
-
-                let mut pressure_force = diff.normalize();
-
-                pressure_force.x *= f32::exp(-dist * dist) * 10000.;
-                pressure_force.y *= f32::exp(-dist * dist) * 10000.;
-
-                if pressure_force.x.is_nan() || pressure_force.y.is_nan() {
-                    pressure_force = Vec2 { x: 10., y: 0. };
-                }
-
-                self.particles[i].forces.x += pressure_force.x;
-                self.particles[i].forces.y += pressure_force.y;
-
-                self.particles[j].forces.x -= pressure_force.x;
-                self.particles[j].forces.y -= pressure_force.y;
-            }
-        }
         
         for i in 0..self.particles.len() {
             let particle = &mut self.particles[i];
