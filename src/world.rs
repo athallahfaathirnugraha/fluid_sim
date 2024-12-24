@@ -26,15 +26,9 @@ impl World {
             particle.update_vel(dt);
             particle.update_pos(dt);
 
-            let mut reverse_y_vel = || {
-                particle.vel.y *= -self.coll_damping;
-                // to prevent the particle from bouncing lower each time
-                particle.vel.y -= gravity * dt;
-            };
-
             if particle.pos.y < 0. {
                 particle.pos.y = 0.;
-                reverse_y_vel();
+                particle.vel.y *= -self.coll_damping;
             }
 
             if particle.pos.x < 0. {
@@ -44,7 +38,7 @@ impl World {
 
             if particle.pos.y > self.boundaries.y {
                 particle.pos.y = self.boundaries.y;
-                reverse_y_vel();
+                particle.vel.y *= -self.coll_damping;
             }
 
             if particle.pos.x > self.boundaries.x {
