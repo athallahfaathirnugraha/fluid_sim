@@ -22,6 +22,7 @@ impl World {
         
         for i in 0..self.particles.len() {
             let particle = &mut self.particles[i];
+
             particle.calculate_forces(gravity, dt);
             particle.update_vel(dt);
             particle.update_pos(dt);
@@ -46,8 +47,7 @@ impl World {
                 particle.vel.x *= -self.coll_damping;
             }
 
-            // reset forces
-            particle.forces = Vec2 { x: 0., y: 0. };
+            particle.reset_forces();
         }
     }
 }
