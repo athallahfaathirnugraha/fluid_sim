@@ -15,6 +15,18 @@ impl World {
     pub fn particles(&self) -> &Vec<Particle> {
         &self.particles
     }
+
+    fn calculate_forces(particle: &mut Particle, dt: f32) {
+        let gravity = 60. * 14.;
+        
+        particle.forces.y += gravity;
+
+        particle.vel.x += particle.forces.x * dt;
+        particle.vel.y += particle.forces.y * dt;
+
+        particle.pos.x += particle.vel.x * dt;
+        particle.pos.y += particle.vel.y * dt;
+    }
     
     /// Assumes that `dt` will stay constant.
     pub fn step(&mut self, dt: f32) {
@@ -22,14 +34,7 @@ impl World {
         
         for i in 0..self.particles.len() {
             let particle = &mut self.particles[i];
-
-            particle.forces.y += gravity;
-
-            particle.vel.x += particle.forces.x * dt;
-            particle.vel.y += particle.forces.y * dt;
-
-            particle.pos.x += particle.vel.x * dt;
-            particle.pos.y += particle.vel.y * dt;
+            World::calculate_forces(particle, dt);
 
             let mut reverse_y_vel = || {
                 particle.vel.y *= -self.coll_damping;
