@@ -1,6 +1,8 @@
 pub mod world;
+pub mod particle;
 
 pub use world::*;
+pub use particle::*;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Vec2 {
@@ -16,22 +18,5 @@ impl Vec2 {
     pub fn normalize(self) -> Vec2 {
         let dist = self.dist();
         Vec2 { x: self.x / dist, y: self.y / dist }
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct Particle {
-    pub pos: Vec2,
-    pub vel: Vec2,
-    pub forces: Vec2,
-}
-
-impl Particle {
-    pub fn new(x: f32, y: f32) -> Particle {
-        Particle {
-            pos: Vec2 { x, y },
-            vel: Vec2 { x: 0., y: 0. },
-            forces: Vec2 { x: 0., y: 0. },
-        }
     }
 }
