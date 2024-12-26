@@ -5,11 +5,22 @@ pub struct World {
     particles: Vec<Particle>,
     boundaries: Vec2,
     coll_damping: f32,
+    particle_mass: f32,
 }
 
 impl World {
-    pub fn new(particles: Vec<Particle>, boundaries: Vec2, coll_damping: f32) -> World {
-        World { particles, boundaries, coll_damping }
+    pub fn new(
+        particles: Vec<Particle>,
+        boundaries: Vec2,
+        coll_damping: f32,
+        particle_mass: f32,
+    ) -> World {
+        World {
+            particles,
+            boundaries,
+            coll_damping,
+            particle_mass,
+        }
     }
 
     pub fn particles(&self) -> &Vec<Particle> {
@@ -23,8 +34,8 @@ impl World {
         for i in 0..self.particles.len() {
             let particle = &mut self.particles[i];
 
-            particle.calculate_forces(gravity, dt);
-            particle.update_vel(dt);
+            particle.calculate_forces(gravity, self.particle_mass, dt);
+            particle.update_vel(self.particle_mass, dt);
             particle.update_pos(dt);
 
             if particle.pos.y < 0. {

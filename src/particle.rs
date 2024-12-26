@@ -20,13 +20,13 @@ impl Particle {
         self.forces = Vec2 { x: 0., y: 0. };
     }
 
-    pub fn calculate_forces(&mut self, gravity: f32, dt: f32) {
-        self.forces.y += gravity;
+    pub fn calculate_forces(&mut self, gravity: f32, particle_mass: f32, dt: f32) {
+        self.forces.y += gravity * particle_mass;
     }
 
-    pub fn update_vel(&mut self, dt: f32) {
-        self.vel.x += self.forces.x * dt;
-        self.vel.y += self.forces.y * dt;
+    pub fn update_vel(&mut self, particle_mass: f32, dt: f32) {
+        self.vel.x += self.forces.x / particle_mass * dt;
+        self.vel.y += self.forces.y / particle_mass * dt;
     }
 
     pub fn update_pos(&mut self, dt: f32) {

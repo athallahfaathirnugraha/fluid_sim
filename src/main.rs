@@ -59,6 +59,7 @@ impl MyApp {
             particles,
             fluid_sim::Vec2 { x: 400., y: 400. },
             0.5,
+            1.,
         ))) }
     }
 }
