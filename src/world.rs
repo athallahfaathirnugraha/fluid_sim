@@ -2,10 +2,10 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 pub struct World {
-    particles: Vec<Particle>,
-    boundaries: Vec2,
-    coll_damping: f32,
-    particle_mass: f32,
+    pub particles: Vec<Particle>,
+    pub boundaries: Vec2,
+    pub coll_damping: f32,
+    pub particle_mass: f32,
 }
 
 impl World {
@@ -34,7 +34,7 @@ impl World {
         for i in 0..self.particles.len() {
             let particle = &mut self.particles[i];
 
-            particle.calculate_forces(gravity, self.particle_mass, dt);
+            particle.calculate_forces(gravity, self.particle_mass);
             particle.update_vel(self.particle_mass, dt);
             particle.update_pos(dt);
 
@@ -59,6 +59,17 @@ impl World {
             }
 
             particle.reset_forces();
+        }
+    }
+}
+
+impl Default for World {
+    fn default() -> World {
+        World {
+            particles: vec![],
+            boundaries: Vec2 { x: 400., y: 400. },
+            coll_damping: 0.5,
+            particle_mass: 1.,
         }
     }
 }

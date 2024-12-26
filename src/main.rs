@@ -55,12 +55,10 @@ impl MyApp {
             }
         }
 
-        MyApp { world: Arc::new(Mutex::new(World::new(
+        MyApp { world: Arc::new(Mutex::new(World {
             particles,
-            fluid_sim::Vec2 { x: 400., y: 400. },
-            0.5,
-            1.,
-        ))) }
+            ..Default::default()
+        })) }
     }
 }
 
