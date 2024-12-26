@@ -25,12 +25,10 @@ impl Particle {
     }
 
     pub fn update_vel(&mut self, particle_mass: f32, dt: f32) {
-        self.vel.x += self.forces.x / particle_mass * dt;
-        self.vel.y += self.forces.y / particle_mass * dt;
+        self.vel += self.forces / particle_mass * dt;
     }
 
     pub fn update_pos(&mut self, dt: f32) {
-        self.pos.x += self.vel.x * dt;
-        self.pos.y += self.vel.y * dt;
+        self.pos += self.vel * dt;
     }
 }
