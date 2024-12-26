@@ -84,3 +84,14 @@ impl DivAssign<f32> for Vec2 {
         *self = *self / rhs;
     }
 }
+
+impl Neg for Vec2 {
+    type Output = Vec2;
+
+    fn neg(self) -> Vec2 {
+        Vec2 {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
