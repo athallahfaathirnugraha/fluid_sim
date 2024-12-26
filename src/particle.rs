@@ -31,4 +31,19 @@ impl Particle {
     pub fn update_pos(&mut self, dt: f32) {
         self.pos += self.vel * dt;
     }
+
+    pub fn density(&self, radius: f32, neighbors: &Vec<Particle>) -> f32 {
+        let area = std::f32::consts::PI * radius * radius;
+        let radius_sqr = radius * radius;
+
+        let mut len = 0;
+
+        for &neighbor in neighbors {
+            if (self.pos - neighbor.pos).dist_sqr() <= radius_sqr {
+                len += 1;
+            }
+        }
+
+        len as f32 / area
+    }
 }

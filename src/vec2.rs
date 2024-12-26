@@ -7,8 +7,14 @@ pub struct Vec2 {
 }
 
 impl Vec2 {
+    /// Returns the distance from this vector to 0,0.
     pub fn dist(self) -> f32 {
         (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    /// Returns the distance from this vector to 0,0 squared.
+    pub fn dist_sqr(self) -> f32 {
+        self.x * self.x + self.y * self.y
     }
 
     pub fn normalize(self) -> Vec2 {
