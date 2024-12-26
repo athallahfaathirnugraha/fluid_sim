@@ -55,10 +55,7 @@ impl MyApp {
             }
         }
 
-        MyApp { world: Arc::new(Mutex::new(World {
-            particles,
-            ..Default::default()
-        })) }
+        MyApp { world: Arc::new(Mutex::new(World::with_particles(particles))) }
     }
 }
 

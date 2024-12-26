@@ -9,17 +9,10 @@ pub struct World {
 }
 
 impl World {
-    pub fn new(
-        particles: Vec<Particle>,
-        boundaries: Vec2,
-        coll_damping: f32,
-        particle_mass: f32,
-    ) -> World {
+    pub fn with_particles(particles: Vec<Particle>) -> World {
         World {
             particles,
-            boundaries,
-            coll_damping,
-            particle_mass,
+            ..Default::default()
         }
     }
 
