@@ -2,7 +2,7 @@ use crate::*;
 
 #[derive(Debug, Clone)]
 pub struct World {
-    pub particles: Vec<Particle>,
+    particles: Vec<Particle>,
     pub boundaries: Vec2,
     pub coll_damping: f32,
     pub particle_mass: f32,
