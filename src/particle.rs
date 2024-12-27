@@ -32,6 +32,7 @@ impl Particle {
         self.pos += self.vel * dt;
     }
 
+    /// The current particle should be included in `neighbors`.
     pub fn density(&self, radius: f32, neighbors: &Vec<Particle>, particle_mass: f32) -> f32 {
         let area = std::f32::consts::PI * radius * radius;
         let radius_sqr = radius * radius;
