@@ -20,17 +20,20 @@ impl World {
     pub fn particles(&self) -> &Vec<Particle> {
         &self.particles
     }
-    
-    /// Assumes that `dt` will stay constant.
-    pub fn step(&mut self, dt: f32) {
-        let gravity = 60. * 14.;
 
-        // update particle density
+    pub fn update_densities(&mut self) {
         for i in 0..self.particles.len() {
             let mut particle = self.particles[i];
             particle.density = particle.density(self.density_radius, &self.particles, self.particle_mass);
             self.particles[i] = particle;
         }
+    }
+    
+    /// Assumes that `dt` will stay constant.
+    pub fn step(&mut self, dt: f32) {
+        let gravity = 60. * 14.;
+
+        self.update_densities();
         
         for i in 0..self.particles.len() {
             // copy the particle from vec
