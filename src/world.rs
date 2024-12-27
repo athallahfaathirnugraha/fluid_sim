@@ -25,8 +25,10 @@ impl World {
         let gravity = 60. * 14.;
         
         for i in 0..self.particles.len() {
-            let particle = &mut self.particles[i];
+            // copy the particle from vec
+            let mut particle = self.particles[i];
 
+            particle.reset_forces();
             particle.calculate_forces(gravity, self.particle_mass);
             particle.update_vel(self.particle_mass, dt);
             particle.update_pos(dt);
@@ -51,7 +53,8 @@ impl World {
                 particle.vel.x *= -self.coll_damping;
             }
 
-            particle.reset_forces();
+            // copy the updated particle to the original vec
+            self.particles[i] = particle;
         }
     }
 }
