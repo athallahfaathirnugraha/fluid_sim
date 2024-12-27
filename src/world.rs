@@ -6,6 +6,7 @@ pub struct World {
     pub boundaries: Vec2,
     pub coll_damping: f32,
     pub particle_mass: f32,
+    pub density_radius: f32,
 }
 
 impl World {
@@ -23,6 +24,13 @@ impl World {
     /// Assumes that `dt` will stay constant.
     pub fn step(&mut self, dt: f32) {
         let gravity = 60. * 14.;
+
+        // update particle density
+        for i in 0..self.particles.len() {
+            let mut particle = self.particles[i];
+            particle.density = particle.density(self.density_radius, &self.particles, self.particle_mass);
+            self.particles[i] = particle;
+        }
         
         for i in 0..self.particles.len() {
             // copy the particle from vec
@@ -66,6 +74,7 @@ impl Default for World {
             boundaries: Vec2 { x: 400., y: 400. },
             coll_damping: 0.5,
             particle_mass: 1.,
+            density_radius: 10.,
         }
     }
 }

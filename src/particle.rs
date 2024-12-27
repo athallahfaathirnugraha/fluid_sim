@@ -5,6 +5,7 @@ pub struct Particle {
     pub pos: Vec2,
     pub vel: Vec2,
     pub forces: Vec2,
+    pub density: f32,
 }
 
 impl Particle {
@@ -13,6 +14,7 @@ impl Particle {
             pos: Vec2 { x, y },
             vel: Vec2 { x: 0., y: 0. },
             forces: Vec2 { x: 0., y: 0. },
+            density: 0.,
         }
     }
 
