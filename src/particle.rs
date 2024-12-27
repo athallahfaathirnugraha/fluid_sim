@@ -20,7 +20,7 @@ impl Particle {
         self.forces = Vec2 { x: 0., y: 0. };
     }
 
-    pub fn calculate_forces(&mut self, gravity: f32, particle_mass: f32) {
+    pub fn calculate_forces(&mut self, gravity: f32, particle_mass: f32, neighbors: &Vec<Particle>) {
         self.forces.y += gravity * particle_mass;
     }
 

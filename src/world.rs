@@ -29,7 +29,7 @@ impl World {
             let mut particle = self.particles[i];
 
             particle.reset_forces();
-            particle.calculate_forces(gravity, self.particle_mass);
+            particle.calculate_forces(gravity, self.particle_mass, &self.particles);
             particle.update_vel(self.particle_mass, dt);
             particle.update_pos(dt);
 
