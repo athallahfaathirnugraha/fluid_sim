@@ -66,6 +66,14 @@ impl eframe::App for MyApp {
        egui::CentralPanel::default().show(ctx, |ui| {
            let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::click_and_drag());
 
+           painter.rect_filled(response.rect, 5., Color32::BLACK);
+
+           painter.debug_rect(
+               Rect { min: Pos2::ZERO, max: pos2(world.boundaries.x, world.boundaries.y) },
+               Color32::GREEN,
+               "boundaries",
+           );
+
            for &particle in world.particles() {
                painter.circle_filled(pos2(particle.pos.x, particle.pos.y), 2., Color32::BLUE);
            }
