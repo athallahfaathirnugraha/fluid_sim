@@ -42,8 +42,8 @@ impl MyApp {
     fn new() -> MyApp {
         let mut particles = vec![];
 
-        let hori_num = 15;
-        let vert_num = 15;
+        let hori_num = 20;
+        let vert_num = 20;
         let spacing = 10;
 
         for hori in 0..hori_num {
