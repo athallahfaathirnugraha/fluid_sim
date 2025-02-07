@@ -7,6 +7,7 @@ pub struct World {
     pub coll_damping: f32,
     pub particle_mass: f32,
     pub density_radius: f32,
+    pub target_density: f32,
 }
 
 impl World {
@@ -78,6 +79,7 @@ impl Default for World {
             coll_damping: 0.5,
             particle_mass: 1.,
             density_radius: 10.,
+            target_density: 0.01,
         }
     }
 }
