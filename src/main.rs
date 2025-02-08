@@ -44,7 +44,7 @@ impl MyApp {
 
         let hori_num = 20;
         let vert_num = 20;
-        let spacing = 10;
+        let spacing = 1;
 
         for hori in 0..hori_num {
             for vert in 0..vert_num {

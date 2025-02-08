@@ -76,7 +76,7 @@ impl Default for World {
     fn default() -> World {
         World {
             particles: vec![],
-            boundaries: Vec2 { x: 200., y: 200. },
+            boundaries: Vec2 { x: 100., y: 200. },
             coll_damping: 0.5,
             particle_mass: 1.,
             density_radius: 10.,
