@@ -68,14 +68,19 @@ impl eframe::App for MyApp {
 
            painter.rect_filled(response.rect, 5., Color32::BLACK);
 
+           let offset = 10.;
+
            painter.debug_rect(
-               Rect { min: Pos2::ZERO, max: pos2(world.boundaries.x, world.boundaries.y) },
+               Rect {
+                   min: pos2(offset, offset),
+                   max: pos2(world.boundaries.x + offset, world.boundaries.y + offset)
+               },
                Color32::GREEN,
                "boundaries",
            );
 
            for &particle in world.particles() {
-               painter.circle_filled(pos2(particle.pos.x, particle.pos.y), 2., Color32::BLUE);
+               painter.circle_filled(pos2(particle.pos.x + offset, particle.pos.y + offset), 2., Color32::BLUE);
            }
        });
 
