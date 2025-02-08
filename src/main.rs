@@ -44,13 +44,13 @@ impl MyApp {
 
         let hori_num = 20;
         let vert_num = 20;
-        let spacing = 1;
+        let spacing = 0.01;
 
         for hori in 0..hori_num {
             for vert in 0..vert_num {
                 particles.push(Particle::new(
-                    (hori * spacing) as f32,
-                    (vert * spacing) as f32,
+                    (hori as f32 * spacing) as f32 + 1.,
+                    (vert as f32 * spacing) as f32,
                 ));
             }
         }

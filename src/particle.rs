@@ -33,27 +33,14 @@ impl Particle {
 
         for neighbor in neighbors {
             let pressure_force = Particle::pressure_force(self, neighbor, target_density);
-
-            let mut pressure_dir = (self.pos - neighbor.pos).normalize();
-
-            if pressure_dir == (Vec2 { x: 0., y: 0. }) {
-                use rand::Rng;
-
-                let mut rng = rand::thread_rng();
-
-                pressure_dir = Vec2 {
-                    x: rng.gen::<f32>(),
-                    y: rng.gen::<f32>(),
-                };
-            }
-
+            let pressure_dir = (self.pos - neighbor.pos).normalize();
             self.forces += pressure_dir * pressure_force;
         }
     }
 
     pub fn pressure_force(a: &Particle, b: &Particle, target_density: f32) -> f32 {
         let density = f32::max(a.density, b.density);
-        let multiplier = f32::max(1., 100. - Vec2::dist(a.pos - b.pos));
+        let multiplier = f32::min(1000000., 4000. / Vec2::dist(a.pos - b.pos));
         f32::max(0., (density - target_density) * multiplier)
     }
 
