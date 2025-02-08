@@ -25,6 +25,7 @@ impl World {
     pub fn update_densities(&mut self) {
         for i in 0..self.particles.len() {
             let mut particle = self.particles[i];
+            // TODO: grid neighbors
             particle.density = particle.density(self.density_radius, &self.particles, self.particle_mass);
             self.particles[i] = particle;
         }
@@ -41,7 +42,7 @@ impl World {
             let mut particle = self.particles[i];
 
             particle.reset_forces();
-            particle.calculate_forces(gravity, self.particle_mass, &self.particles);
+            particle.calculate_forces(gravity, self.particle_mass, self.target_density, &self.particles);
             particle.update_vel(self.particle_mass, dt);
             particle.update_pos(dt);
 
@@ -75,7 +76,7 @@ impl Default for World {
     fn default() -> World {
         World {
             particles: vec![],
-            boundaries: Vec2 { x: 400., y: 400. },
+            boundaries: Vec2 { x: 200., y: 200. },
             coll_damping: 0.5,
             particle_mass: 1.,
             density_radius: 10.,

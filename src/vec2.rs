@@ -1,6 +1,11 @@
 use std::ops::*;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+)]
 pub struct Vec2 {
     pub x: f32,
     pub y: f32,
@@ -19,6 +24,11 @@ impl Vec2 {
 
     pub fn normalize(self) -> Vec2 {
         let dist = self.dist();
+
+        if dist == 0. {
+            return Vec2 { x: 0., y: 0. }
+        }
+
         Vec2 { x: self.x / dist, y: self.y / dist }
     }
 }

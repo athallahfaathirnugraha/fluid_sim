@@ -22,8 +22,39 @@ impl Particle {
         self.forces = Vec2 { x: 0., y: 0. };
     }
 
-    pub fn calculate_forces(&mut self, gravity: f32, particle_mass: f32, neighbors: &Vec<Particle>) {
+    pub fn calculate_forces(
+        &mut self,
+        gravity: f32,
+        particle_mass: f32,
+        target_density: f32,
+        neighbors: &Vec<Particle>
+    ) {
         self.forces.y += gravity * particle_mass;
+
+        for neighbor in neighbors {
+            let pressure_force = Particle::pressure_force(self, neighbor, target_density);
+
+            let mut pressure_dir = (self.pos - neighbor.pos).normalize();
+
+            if pressure_dir == (Vec2 { x: 0., y: 0. }) {
+                use rand::Rng;
+
+                let mut rng = rand::thread_rng();
+
+                pressure_dir = Vec2 {
+                    x: rng.gen::<f32>(),
+                    y: rng.gen::<f32>(),
+                };
+            }
+
+            self.forces += pressure_dir * pressure_force;
+        }
+    }
+
+    pub fn pressure_force(a: &Particle, b: &Particle, target_density: f32) -> f32 {
+        let density = f32::max(a.density, b.density);
+        let multiplier = f32::max(1., 100. - Vec2::dist(a.pos - b.pos));
+        f32::max(0., (density - target_density) * multiplier)
     }
 
     pub fn update_vel(&mut self, particle_mass: f32, dt: f32) {
