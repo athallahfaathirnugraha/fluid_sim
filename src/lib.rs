@@ -7,4 +7,5 @@ pub use vec2::*;
 #[derive(Debug)]
 pub struct Simulation {
     pub particle_mass: f32,
+    pub particles: Vec<Particle>,
 }
