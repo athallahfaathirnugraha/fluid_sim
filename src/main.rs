@@ -26,7 +26,7 @@ impl eframe::App for MyEguiApp {
        });
 
        egui::Window::new("simulation").show(ctx, |ui| {
-           let (response, mut painter) =
+           let (response, painter) =
                ui.allocate_painter(ui.available_size(), Sense::empty());
 
            let painter_pos = |pos: Pos2| {
