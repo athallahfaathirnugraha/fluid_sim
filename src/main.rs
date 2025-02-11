@@ -181,7 +181,11 @@ impl eframe::App for MyEguiApp {
                     }
                 }
                 Simulate { simulation, .. } => {
-                    let simulation = simulation.lock().unwrap();
+                    let mut simulation = simulation.lock().unwrap();
+                    simulation.boundaries = fluid_sim::Rect {
+                        min: fluid_sim::Vec2 { x: 0., y: 0. },
+                        max: fluid_sim::Vec2 { x: response.rect.width(), y: response.rect.height() },
+                    };
 
                     for particle in simulation.particles() {
                         let pos = painter_pos(pos2(particle.pos.x, particle.pos.y));

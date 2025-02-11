@@ -11,6 +11,7 @@ pub use rect::*;
 pub struct Simulation {
     pub particle_mass: f32,
     pub gravity: f32,
+    pub boundaries: Rect,
     particles: Vec<Particle>,
 }
 
@@ -47,6 +48,10 @@ impl Default for Simulation {
         Simulation {
             particle_mass: 1.,
             gravity: 196.,
+            boundaries: Rect {
+                min: Vec2 { x: 0., y: 0. },
+                max: Vec2 { x: 0., y: 0. }
+            },
             particles: vec![],
         }
     }
