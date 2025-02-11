@@ -1,6 +1,7 @@
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Instant;
+use std::sync::mpsc;
 
 use eframe::egui;
 use egui::*;
@@ -16,6 +17,7 @@ fn main() {
     );
 }
 
+#[derive(Clone)]
 enum MyEguiApp {
     Setup {
         particle_num: usize,
@@ -23,7 +25,10 @@ enum MyEguiApp {
         positions: Vec<Pos2>,
         offset: egui::Vec2,
     },
-    Simulate(Arc<Mutex<Simulation>>),
+    Simulate {
+        simulation: Arc<Mutex<Simulation>>,
+        stop_tx: mpsc::Sender<bool>,
+    },
 }
 
 impl MyEguiApp {
@@ -70,7 +75,12 @@ impl eframe::App for MyEguiApp {
                                 .collect(),
                         )));
 
-                        *self = Simulate(Arc::clone(&arc_simulation));
+                        let (tx, rx) = mpsc::channel::<bool>();
+
+                        *self = Simulate {
+                            simulation: Arc::clone(&arc_simulation),
+                            stop_tx: tx,
+                        };
 
                         thread::spawn(move || {
                             println!("starting simulation thread");
@@ -80,7 +90,7 @@ impl eframe::App for MyEguiApp {
 
                             let mut accum = 0.;
     
-                            loop {
+                            'blk: loop {
                                 accum += now.elapsed().as_secs_f32();
                                 now = Instant::now();
 
@@ -89,6 +99,11 @@ impl eframe::App for MyEguiApp {
                                     simulation.step(dt);
 
                                     accum -= dt;
+                                }
+
+                                match rx.try_recv() {
+                                    Ok(stop) if stop => break 'blk,
+                                    _ => (),
                                 }
                             }
 
@@ -119,8 +134,10 @@ impl eframe::App for MyEguiApp {
                         x += 1;
                     }
                 }
-                Simulate(simulation) => {
+                Simulate { simulation, stop_tx } => {
                     if ui.button("stop").clicked() {
+                        stop_tx.send(true).unwrap();
+
                         *self = Setup {
                             particle_num: 200,
                             spacing: 7.,
@@ -166,7 +183,7 @@ impl eframe::App for MyEguiApp {
                         painter.circle_filled(position, 3., Color32::BLUE);
                     }
                 }
-                Simulate(simulation) => {
+                Simulate { simulation, .. } => {
                     let simulation = simulation.lock().unwrap();
 
                     for particle in simulation.particles() {
