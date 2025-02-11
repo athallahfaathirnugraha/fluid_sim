@@ -22,6 +22,8 @@ impl Simulation {
     pub fn particles(&self) -> &Vec<Particle> {
         &self.particles
     }
+
+    pub fn step(&mut self, dt: f32) {}
 }
 
 impl Default for Simulation {

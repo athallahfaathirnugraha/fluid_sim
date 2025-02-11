@@ -1,3 +1,7 @@
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::time::Instant;
+
 use eframe::egui;
 use egui::*;
 
@@ -5,7 +9,11 @@ use fluid_sim::*;
 
 fn main() {
     let native_options = eframe::NativeOptions::default();
-    eframe::run_native("My egui App", native_options, Box::new(|cc| Ok(Box::new(MyEguiApp::new(cc)))));
+    eframe::run_native(
+        "My egui App",
+        native_options,
+        Box::new(|cc| Ok(Box::new(MyEguiApp::new(cc)))),
+    );
 }
 
 enum MyEguiApp {
@@ -15,7 +23,7 @@ enum MyEguiApp {
         positions: Vec<Pos2>,
         offset: egui::Vec2,
     },
-    Simulate(Simulation),
+    Simulate(Arc<Mutex<Simulation>>),
 }
 
 impl MyEguiApp {
@@ -34,96 +42,114 @@ impl MyEguiApp {
 }
 
 impl eframe::App for MyEguiApp {
-   fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-       egui::CentralPanel::default().show(ctx, |ui| {
-           ui.heading("water simulation");
-       });
+    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("water simulation");
+        });
 
-       egui::Window::new("simulation").show(ctx, |ui| {
-           use MyEguiApp::*;
-           
-           match self {
-               Setup {
-                   ref mut particle_num,
-                   ref mut spacing,
-                   ref mut positions,
-                   ref mut offset,
-               } => {
-                   ui.add(Slider::new(particle_num, 0..=800).text("particle num"));
-                   ui.add(Slider::new(spacing, 0.0..=100.).text("spacing"));
-                   ui.add(Slider::new(&mut offset.x, 0.0..=100.).text("x offset"));
-                   ui.add(Slider::new(&mut offset.y, 0.0..=100.).text("y offset"));
+        egui::Window::new("simulation").show(ctx, |ui| {
+            use MyEguiApp::*;
 
-                   if ui.button("run").clicked() {
-                       *self = Simulate(Simulation::with_particles(
-                           positions.into_iter().map(|pos| Particle {
-                               pos: fluid_sim::Vec2 { x: pos.x, y: pos.y },
-                               vel: fluid_sim::Vec2 { x: 0., y: 0. },
-                               prev_pos: fluid_sim::Vec2 { x: 0., y: 0. },
-                           }).collect()
-                       ));
+            match self {
+                Setup {
+                    ref mut particle_num,
+                    ref mut spacing,
+                    ref mut positions,
+                    ref mut offset,
+                } => {
+                    ui.add(Slider::new(particle_num, 0..=800).text("particle num"));
+                    ui.add(Slider::new(spacing, 0.0..=100.).text("spacing"));
+                    ui.add(Slider::new(&mut offset.x, 0.0..=100.).text("x offset"));
+                    ui.add(Slider::new(&mut offset.y, 0.0..=100.).text("y offset"));
 
-                       return;
-                   }
+                    if ui.button("run").clicked() {
+                        let arc_simulation = Arc::new(Mutex::new(Simulation::with_particles(
+                            positions
+                                .into_iter()
+                                .map(|pos| Particle {
+                                    pos: fluid_sim::Vec2 { x: pos.x, y: pos.y },
+                                    vel: fluid_sim::Vec2 { x: 0., y: 0. },
+                                    prev_pos: fluid_sim::Vec2 { x: 0., y: 0. },
+                                })
+                                .collect(),
+                        )));
 
-                   *positions = vec![Pos2::ZERO; *particle_num];
+                        *self = Simulate(Arc::clone(&arc_simulation));
 
-                   let columns = f32::sqrt(*particle_num as f32) as u32;
+                        thread::spawn(move || {
+                            let dt = 1. / 60.; // seconds
+                            let mut now = Instant::now();
 
-                   let mut x = 0;
-                   let mut y = 0;
-                   for i in 0..*particle_num {
-                       if x >= columns {
-                           x = 0;
-                           y += 1;
-                       }
+                            let mut accum = 0.;
+    
+                            loop {
+                                accum += now.elapsed().as_secs_f32();
+                                now = Instant::now();
 
-                       positions[i] = pos2(
-                           x as f32 * *spacing + offset.x,
-                           y as f32 * *spacing + offset.y,
-                       );
+                                while accum >= dt {
+                                    let mut simulation = arc_simulation.lock().unwrap();
+                                    simulation.step(dt);
 
-                       x += 1;
-                   }
-               },
-               Simulate(simulation) => (),
-           }
-           
-           let (response, painter) =
-               ui.allocate_painter(ui.available_size(), Sense::empty());
+                                    accum -= dt;
+                                }
+                            }
+                        });
 
-           let painter_pos = |pos: Pos2| {
-               pos2(
-                   pos.x + response.rect.min.x,
-                   pos.y + response.rect.min.y,
-               )
-            };
+                        return;
+                    }
 
-           painter.debug_rect(
-               Rect {
-                   min: painter_pos(pos2(0., 0.)),
-                   max: painter_pos(pos2(response.rect.width(), response.rect.height())),
-               },
-               Color32::GREEN,
-               "text",
-           );
+                    *positions = vec![Pos2::ZERO; *particle_num];
 
-           match self {
-               Setup { positions, .. } => {
-                   for position in positions
-                       .iter()
-                       .map(|pos| painter_pos(*pos))
-                   {
-                       painter.circle_filled(position, 3., Color32::BLUE);
-                   }
-               },
-               Simulate(simulation) => {
-                   for particle in simulation.particles() {
-                       let pos = painter_pos(pos2(particle.pos.x, particle.pos.y));
-                       painter.circle_filled(pos, 3., Color32::BLUE);
-                   }
-               },
-           }
-       });
-   }
+                    let columns = f32::sqrt(*particle_num as f32) as u32;
+
+                    let mut x = 0;
+                    let mut y = 0;
+                    for i in 0..*particle_num {
+                        if x >= columns {
+                            x = 0;
+                            y += 1;
+                        }
+
+                        positions[i] = pos2(
+                            x as f32 * *spacing + offset.x,
+                            y as f32 * *spacing + offset.y,
+                        );
+
+                        x += 1;
+                    }
+                }
+                Simulate(simulation) => (),
+            }
+
+            let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::empty());
+
+            let painter_pos =
+                |pos: Pos2| pos2(pos.x + response.rect.min.x, pos.y + response.rect.min.y);
+
+            painter.debug_rect(
+                Rect {
+                    min: painter_pos(pos2(0., 0.)),
+                    max: painter_pos(pos2(response.rect.width(), response.rect.height())),
+                },
+                Color32::GREEN,
+                "text",
+            );
+
+            match self {
+                Setup { positions, .. } => {
+                    for position in positions.iter().map(|pos| painter_pos(*pos)) {
+                        painter.circle_filled(position, 3., Color32::BLUE);
+                    }
+                }
+                Simulate(simulation) => {
+                    let simulation = simulation.lock().unwrap();
+
+                    for particle in simulation.particles() {
+                        let pos = painter_pos(pos2(particle.pos.x, particle.pos.y));
+                        painter.circle_filled(pos, 3., Color32::BLUE);
+                    }
+                }
+            }
+        });
+    }
 }
