@@ -147,6 +147,7 @@ impl eframe::App for MyEguiApp {
 
                     let mut simulation = simulation.lock().unwrap();
 
+                    ui.add(egui::Slider::new(&mut simulation.interaction_radius, 0.0..=200.).text("interaction radius"));
                     ui.add(egui::Slider::new(&mut simulation.pressure_multiplier, 0.0..=10.).text("pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.near_pressure_multiplier, 0.0..=10.).text("near pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.rest_density, 0.0..=10.).text("rest density"));
@@ -162,7 +163,7 @@ impl eframe::App for MyEguiApp {
 
         egui::Window::new("simulation").constrain_to(central_panel_rect).show(ctx, |ui| {
             use MyEguiApp::*;
-            
+
             let (response, painter) = ui.allocate_painter(
                 ui.available_size(),
                 Sense::empty(),

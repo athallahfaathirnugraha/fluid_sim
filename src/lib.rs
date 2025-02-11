@@ -118,6 +118,10 @@ impl Simulation {
             self.particles[i].pos += dpos;
         }
     }
+
+    fn neighbors(&self, particle_index: usize) -> Vec<usize> {
+        todo!()
+    }
 }
 
 impl Default for Simulation {
@@ -129,7 +133,7 @@ impl Default for Simulation {
                 min: Vec2 { x: 0., y: 0. },
                 max: Vec2 { x: 0., y: 0. }
             },
-            interaction_radius: 150.,
+            interaction_radius: 100.,
             pressure_multiplier: 4.0,
             near_pressure_multiplier: 4.8,
             rest_density: 2.6,
