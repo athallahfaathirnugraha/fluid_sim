@@ -7,6 +7,7 @@ pub use vec2::*;
 #[derive(Debug)]
 pub struct Simulation {
     pub particle_mass: f32,
+    pub gravity: f32,
     particles: Vec<Particle>,
 }
 
@@ -20,6 +21,7 @@ impl Default for Simulation {
     fn default() -> Simulation {
         Simulation {
             particle_mass: 1.,
+            gravity: 9.8,
             particles: vec![],
         }
     }
