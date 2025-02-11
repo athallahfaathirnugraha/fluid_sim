@@ -81,6 +81,8 @@ impl Simulation {
             // TODO: only neighbors
             // compute density
             for j in 0..self.particles.len() {
+                if i == j { continue; }
+
                 let particle_i = self.particles[i];
                 let particle_j = self.particles[j];
 
@@ -101,6 +103,8 @@ impl Simulation {
 
             // TODO: only neighbors
             for j in 0..self.particles.len() {
+                if i == j { continue; }
+
                 let particle_i = self.particles[i];
                 let particle_j = &mut self.particles[j];
 
