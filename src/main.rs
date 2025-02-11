@@ -148,7 +148,7 @@ impl eframe::App for MyEguiApp {
             }
         });
 
-        let mut central_panel_rect = Rect::ZERO;
+        let mut central_panel_rect = egui::Rect::ZERO;
 
         egui::CentralPanel::default().show(ctx, |ui| {
             central_panel_rect = ui.max_rect();
@@ -166,7 +166,7 @@ impl eframe::App for MyEguiApp {
                 |pos: Pos2| pos2(pos.x + response.rect.min.x, pos.y + response.rect.min.y);
 
             painter.debug_rect(
-                Rect {
+                egui::Rect {
                     min: painter_pos(pos2(0., 0.)),
                     max: painter_pos(pos2(response.rect.width(), response.rect.height())),
                 },
