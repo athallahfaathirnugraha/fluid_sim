@@ -29,6 +29,26 @@ impl Simulation {
 
     pub fn step(&mut self, dt: f32) {
         for particle in &mut self.particles {
+            if particle.pos.x < self.boundaries.min.x {
+                particle.pos.x = self.boundaries.min.x;
+                particle.vel.x *= -1.;
+            }
+            
+            if particle.pos.x > self.boundaries.max.x {
+                particle.pos.x = self.boundaries.max.x;
+                particle.vel.x *= -1.;
+            }
+            
+            if particle.pos.y < self.boundaries.min.y {
+                particle.pos.y = self.boundaries.min.y;
+                particle.vel.y *= -1.;
+            }
+            
+            if particle.pos.y > self.boundaries.max.y {
+                particle.pos.y = self.boundaries.max.y;
+                particle.vel.y *= -1.;
+            }
+            
             particle.vel.y += self.gravity * dt;
         }
 
