@@ -104,8 +104,8 @@ impl Simulation {
                 let particle_i = self.particles[i];
                 let particle_j = &mut self.particles[j];
 
-                let diff = particle_i.pos - particle_j.pos;
-                let dist = Vec2::dist(particle_i.pos - particle_j.pos);
+                let diff = particle_j.pos - particle_i.pos;
+                let dist = Vec2::dist(diff);
                 let q = dist / interaction_radius;
 
                 if q < 1. {
@@ -134,9 +134,9 @@ impl Default for Simulation {
                 max: Vec2 { x: 0., y: 0. }
             },
             interaction_radius: 100.,
-            pressure_multiplier: 4.0,
-            near_pressure_multiplier: 4.8,
-            rest_density: 2.6,
+            pressure_multiplier: 1.,
+            near_pressure_multiplier: 1.8,
+            rest_density: 0.05,
             particles: vec![],
         }
     }
