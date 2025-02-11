@@ -43,11 +43,7 @@ impl MyEguiApp {
 
 impl eframe::App for MyEguiApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("water simulation");
-        });
-
-        egui::Window::new("simulation").show(ctx, |ui| {
+        egui::SidePanel::left("settings").show(ctx, |ui| {
             use MyEguiApp::*;
 
             match self {
@@ -77,6 +73,8 @@ impl eframe::App for MyEguiApp {
                         *self = Simulate(Arc::clone(&arc_simulation));
 
                         thread::spawn(move || {
+                            println!("starting simulation thread");
+                            
                             let dt = 1. / 60.; // seconds
                             let mut now = Instant::now();
 
@@ -93,6 +91,9 @@ impl eframe::App for MyEguiApp {
                                     accum -= dt;
                                 }
                             }
+
+                            // TODO: stop simulation thread after stopping simulation
+                            println!("stopping simulation thread");
                         });
 
                         return;
@@ -118,10 +119,34 @@ impl eframe::App for MyEguiApp {
                         x += 1;
                     }
                 }
-                Simulate(simulation) => (),
-            }
+                Simulate(simulation) => {
+                    if ui.button("stop").clicked() {
+                        *self = Setup {
+                            particle_num: 200,
+                            spacing: 7.,
+                            positions: vec![],
+                            offset: egui::Vec2 { x: 17., y: 17. },
+                        };
 
-            let (response, painter) = ui.allocate_painter(ui.available_size(), Sense::empty());
+                        return;
+                    }
+                },
+            }
+        });
+
+        let mut central_panel_rect = Rect::ZERO;
+
+        egui::CentralPanel::default().show(ctx, |ui| {
+            central_panel_rect = ui.max_rect();
+        });
+
+        egui::Window::new("simulation").constrain_to(central_panel_rect).show(ctx, |ui| {
+            use MyEguiApp::*;
+            
+            let (response, painter) = ui.allocate_painter(
+                ui.available_size(),
+                Sense::empty(),
+            );
 
             let painter_pos =
                 |pos: Pos2| pos2(pos.x + response.rect.min.x, pos.y + response.rect.min.y);
