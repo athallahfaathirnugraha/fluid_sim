@@ -148,6 +148,8 @@ impl eframe::App for MyEguiApp {
                         let pos = painter_pos(pos2(particle.pos.x, particle.pos.y));
                         painter.circle_filled(pos, 3., Color32::BLUE);
                     }
+
+                    ctx.request_repaint();
                 }
             }
         });

@@ -23,14 +23,27 @@ impl Simulation {
         &self.particles
     }
 
-    pub fn step(&mut self, dt: f32) {}
+    pub fn step(&mut self, dt: f32) {
+        for particle in &mut self.particles {
+            particle.vel.y += self.gravity * dt;
+        }
+
+        for particle in &mut self.particles {
+            particle.prev_pos = particle.pos;
+            particle.pos += particle.vel * dt;
+        }
+
+        for particle in &mut self.particles {
+            particle.vel = (particle.pos - particle.prev_pos) / dt;
+        }
+    }
 }
 
 impl Default for Simulation {
     fn default() -> Simulation {
         Simulation {
             particle_mass: 1.,
-            gravity: 9.8,
+            gravity: 196.,
             particles: vec![],
         }
     }
