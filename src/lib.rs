@@ -90,8 +90,8 @@ impl Simulation {
                 let q = dist / interaction_radius;
 
                 if q < 1. {
-                    density = (1. - q) * (1. - q);
-                    near_density = (1. - q) * (1. - q) * (1. - q);
+                    density += (1. - q) * (1. - q);
+                    near_density += (1. - q) * (1. - q) * (1. - q);
                 }
             }
 
@@ -140,7 +140,7 @@ impl Default for Simulation {
             interaction_radius: 100.,
             pressure_multiplier: 30.,
             near_pressure_multiplier: 30.,
-            rest_density: 0.05,
+            rest_density: 30.0,
             particles: vec![],
         }
     }
