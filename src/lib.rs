@@ -12,6 +12,13 @@ pub struct Simulation {
 }
 
 impl Simulation {
+    pub fn with_particles(particles: Vec<Particle>) -> Simulation {
+        Simulation {
+            particles,
+            ..Simulation::default()
+        }
+    }
+    
     pub fn particles(&self) -> &Vec<Particle> {
         &self.particles
     }
