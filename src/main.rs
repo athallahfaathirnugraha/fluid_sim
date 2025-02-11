@@ -112,7 +112,6 @@ impl eframe::App for MyEguiApp {
                                 }
                             }
 
-                            // TODO: stop simulation thread after stopping simulation
                             println!("stopping simulation thread");
                         });
 
