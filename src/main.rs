@@ -144,6 +144,12 @@ impl eframe::App for MyEguiApp {
                         *self = *revert_state.clone();
                         return;
                     }
+
+                    let mut simulation = simulation.lock().unwrap();
+
+                    ui.add(egui::Slider::new(&mut simulation.pressure_multiplier, 0.0..=10.).text("pressure multiplier"));
+                    ui.add(egui::Slider::new(&mut simulation.near_pressure_multiplier, 0.0..=10.).text("near pressure multiplier"));
+                    ui.add(egui::Slider::new(&mut simulation.rest_density, 0.0..=10.).text("rest density"));
                 },
             }
         });
