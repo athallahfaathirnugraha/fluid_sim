@@ -9,7 +9,6 @@ pub use rect::*;
 
 #[derive(Debug)]
 pub struct Simulation {
-    pub particle_mass: f32,
     pub gravity: f32,
     pub boundaries: Rect,
     pub interaction_radius: f32,
@@ -131,7 +130,6 @@ impl Simulation {
 impl Default for Simulation {
     fn default() -> Simulation {
         Simulation {
-            particle_mass: 1.,
             gravity: 196.,
             boundaries: Rect {
                 min: Vec2 { x: 0., y: 0. },
