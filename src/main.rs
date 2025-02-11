@@ -27,7 +27,10 @@ enum MyEguiApp {
     },
     Simulate {
         simulation: Arc<Mutex<Simulation>>,
+        // sender to stop simulation thread
         stop_tx: mpsc::Sender<bool>,
+        // what should the app revert to when simulation is stopped?
+        revert_state: Box<MyEguiApp>,
     },
 }
 
@@ -76,10 +79,12 @@ impl eframe::App for MyEguiApp {
                         )));
 
                         let (tx, rx) = mpsc::channel::<bool>();
+                        let revert_state = self.clone();
 
                         *self = Simulate {
                             simulation: Arc::clone(&arc_simulation),
                             stop_tx: tx,
+                            revert_state: Box::new(revert_state),
                         };
 
                         thread::spawn(move || {
@@ -134,17 +139,10 @@ impl eframe::App for MyEguiApp {
                         x += 1;
                     }
                 }
-                Simulate { simulation, stop_tx } => {
+                Simulate { simulation, stop_tx, revert_state } => {
                     if ui.button("stop").clicked() {
                         stop_tx.send(true).unwrap();
-
-                        *self = Setup {
-                            particle_num: 200,
-                            spacing: 7.,
-                            positions: vec![],
-                            offset: egui::Vec2 { x: 17., y: 17. },
-                        };
-
+                        *self = *revert_state.clone();
                         return;
                     }
                 },
