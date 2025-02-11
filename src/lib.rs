@@ -134,8 +134,8 @@ impl Default for Simulation {
                 max: Vec2 { x: 0., y: 0. }
             },
             interaction_radius: 100.,
-            pressure_multiplier: 1.,
-            near_pressure_multiplier: 1.8,
+            pressure_multiplier: 30.,
+            near_pressure_multiplier: 30.,
             rest_density: 0.05,
             particles: vec![],
         }
