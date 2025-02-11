@@ -117,7 +117,12 @@ impl eframe::App for MyEguiApp {
                        painter.circle_filled(position, 3., Color32::BLUE);
                    }
                },
-               Simulate(_) => (),
+               Simulate(simulation) => {
+                   for particle in simulation.particles() {
+                       let pos = painter_pos(pos2(particle.pos.x, particle.pos.y));
+                       painter.circle_filled(pos, 3., Color32::BLUE);
+                   }
+               },
            }
        });
    }
