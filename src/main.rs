@@ -41,7 +41,7 @@ impl MyEguiApp {
         // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
         // for e.g. egui::PaintCallback.
         MyEguiApp::Setup {
-            particle_num: 200,
+            particle_num: 280,
             spacing: 7.,
             positions: vec![],
             offset: egui::Vec2 { x: 17., y: 17. },
@@ -151,6 +151,7 @@ impl eframe::App for MyEguiApp {
                     ui.add(egui::Slider::new(&mut simulation.pressure_multiplier, 0.0..=50.).text("pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.near_pressure_multiplier, 0.0..=50.).text("near pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.rest_density, 0.0..=50.).text("rest density"));
+                    ui.add(egui::Slider::new(&mut simulation.gravity, 0.0..=1000.).text("gravity"));
                 },
             }
         });
