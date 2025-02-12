@@ -24,6 +24,7 @@ enum MyEguiApp {
         spacing: f32,
         positions: Vec<Pos2>,
         offset: egui::Vec2,
+        builder: SimulationBuilder,
     },
     Simulate {
         simulation: Arc<Mutex<Simulation>>,
@@ -45,6 +46,7 @@ impl MyEguiApp {
             spacing: 7.,
             positions: vec![],
             offset: egui::Vec2 { x: 17., y: 17. },
+            builder: SimulationBuilder::default(),
         }
     }
 }
@@ -60,14 +62,21 @@ impl eframe::App for MyEguiApp {
                     ref mut spacing,
                     ref mut positions,
                     ref mut offset,
+                    ref mut builder,
                 } => {
                     ui.add(Slider::new(particle_num, 0..=800).text("particle num"));
                     ui.add(Slider::new(spacing, 0.0..=100.).text("spacing"));
                     ui.add(Slider::new(&mut offset.x, 0.0..=100.).text("x offset"));
                     ui.add(Slider::new(&mut offset.y, 0.0..=100.).text("y offset"));
 
+                    ui.add(egui::Slider::new(&mut builder.interaction_radius, 0.0..=200.).text("interaction radius"));
+                    ui.add(egui::Slider::new(&mut builder.pressure_multiplier, 0.0..=50.).text("pressure multiplier"));
+                    ui.add(egui::Slider::new(&mut builder.near_pressure_multiplier, 0.0..=50.).text("near pressure multiplier"));
+                    ui.add(egui::Slider::new(&mut builder.rest_density, 0.0..=50.).text("rest density"));
+                    ui.add(egui::Slider::new(&mut builder.gravity, 0.0..=1000.).text("gravity"));
+
                     if ui.button("run").clicked() {
-                        let arc_simulation = Arc::new(Mutex::new(Simulation::with_particles(
+                        *builder = builder.with_particles(
                             positions
                                 .into_iter()
                                 .map(|pos| Particle {
@@ -76,7 +85,9 @@ impl eframe::App for MyEguiApp {
                                     prev_pos: fluid_sim::Vec2 { x: 0., y: 0. },
                                 })
                                 .collect(),
-                        )));
+                        );
+
+                        let arc_simulation = Arc::new(Mutex::new(builder.build()));
 
                         let (tx, rx) = mpsc::channel::<bool>();
                         let revert_state = self.clone();
