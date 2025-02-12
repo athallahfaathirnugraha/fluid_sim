@@ -56,14 +56,13 @@ impl eframe::App for MyEguiApp {
         egui::SidePanel::left("settings").show(ctx, |ui| {
             use MyEguiApp::*;
 
-            // TODO: can we not use ref mut
             match self {
                 Setup {
-                    ref mut particle_num,
-                    ref mut spacing,
-                    ref mut positions,
-                    ref mut offset,
-                    ref mut builder,
+                    particle_num,
+                    spacing,
+                    positions,
+                    offset,
+                    builder,
                 } => {
                     ui.add(Slider::new(particle_num, 0..=800).text("particle num"));
                     ui.add(Slider::new(spacing, 0.0..=100.).text("spacing"));
