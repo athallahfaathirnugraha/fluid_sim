@@ -56,6 +56,7 @@ impl eframe::App for MyEguiApp {
         egui::SidePanel::left("settings").show(ctx, |ui| {
             use MyEguiApp::*;
 
+            // TODO: can we not use ref mut
             match self {
                 Setup {
                     ref mut particle_num,
@@ -193,6 +194,42 @@ impl eframe::App for MyEguiApp {
                 "text",
             );
 
+            let interaction_radius = match self {
+                Setup { builder, .. } => builder.interaction_radius,
+                Simulate { simulation, .. } => simulation.lock().unwrap().interaction_radius,
+            };
+
+            let mut x = 0;
+            let mut y = 0;
+            loop {
+                let display_pos = painter_pos(pos2(
+                    x as f32 * interaction_radius,
+                    y as f32 * interaction_radius,
+                ));
+
+                if display_pos.x > response.rect.max.x {
+                    x = 0;
+                    y += 1;
+                    continue;
+                }
+
+                if display_pos.y > response.rect.max.y {
+                    break;
+                }
+                
+                painter.rect_stroke(
+                    egui::Rect {
+                        min: pos2(display_pos.x, display_pos.y),
+                        max: pos2(display_pos.x + interaction_radius, display_pos.y + interaction_radius),
+                    },
+                    0.,
+                    Stroke::new(1., Color32::GRAY),
+                    StrokeKind::Middle,
+                );
+
+                x += 1;
+            }
+
             match self {
                 Setup { positions, .. } => {
                     for position in positions.iter().map(|pos| painter_pos(*pos)) {
@@ -201,6 +238,7 @@ impl eframe::App for MyEguiApp {
                 }
                 Simulate { simulation, .. } => {
                     let mut simulation = simulation.lock().unwrap();
+
                     simulation.boundaries = fluid_sim::Rect {
                         min: fluid_sim::Vec2 { x: 0., y: 0. },
                         max: fluid_sim::Vec2 { x: response.rect.width(), y: response.rect.height() },
