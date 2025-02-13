@@ -10,6 +10,8 @@ pub use rect::*;
 pub mod simulation_builder;
 pub use simulation_builder::*;
 
+use std::collections::HashMap;
+
 #[derive(Debug)]
 pub struct Simulation {
     pub gravity: f32,
@@ -19,6 +21,7 @@ pub struct Simulation {
     pub near_pressure_multiplier: f32,
     pub rest_density: f32,
     particles: Vec<Particle>,
+    cells: HashMap<(i32, i32), Vec<usize>>,
 }
 
 impl Simulation {

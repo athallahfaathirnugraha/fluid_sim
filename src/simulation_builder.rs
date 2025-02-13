@@ -70,6 +70,7 @@ impl SimulationBuilder {
             near_pressure_multiplier: self.near_pressure_multiplier,
             rest_density: self.rest_density,
             particles: self.particles.clone(),
+            cells: HashMap::new(),
         }
     }
 }
