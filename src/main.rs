@@ -193,17 +193,17 @@ impl eframe::App for MyEguiApp {
                 "text",
             );
 
-            let interaction_radius = match self {
+            let interaction_diameter = match self {
                 Setup { builder, .. } => builder.interaction_radius,
                 Simulate { simulation, .. } => simulation.lock().unwrap().interaction_radius,
-            };
+            } * 2.;
 
             let mut x = 0;
             let mut y = 0;
             loop {
                 let display_pos = painter_pos(pos2(
-                    x as f32 * interaction_radius,
-                    y as f32 * interaction_radius,
+                    x as f32 * interaction_diameter,
+                    y as f32 * interaction_diameter,
                 ));
 
                 if display_pos.x > response.rect.max.x {
@@ -219,7 +219,7 @@ impl eframe::App for MyEguiApp {
                 painter.rect_stroke(
                     egui::Rect {
                         min: pos2(display_pos.x, display_pos.y),
-                        max: pos2(display_pos.x + interaction_radius, display_pos.y + interaction_radius),
+                        max: pos2(display_pos.x + interaction_diameter, display_pos.y + interaction_diameter),
                     },
                     0.,
                     Stroke::new(1., Color32::GRAY),
