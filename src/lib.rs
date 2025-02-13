@@ -63,7 +63,17 @@ impl Simulation {
             particle.vel.y += self.gravity * dt;
         }
 
-        for particle in &mut self.particles {
+        for i in 0..self.particles.len() {
+            let particle = self.particles[i];
+            
+            let prev_cell = self.get_cell_key(particle.prev_pos);
+            let curr_cell = self.get_cell_key(particle.pos);
+
+            if self.cells.contains_key(&prev_cell) { self.remove_from_cell(i, prev_cell); }
+            self.add_to_cell(i, curr_cell);
+
+            let particle = &mut self.particles[i];
+
             particle.prev_pos = particle.pos;
             particle.pos += particle.vel * dt;
         }
