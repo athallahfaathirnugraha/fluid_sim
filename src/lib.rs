@@ -21,6 +21,8 @@ pub struct Simulation {
     pub near_pressure_multiplier: f32,
     pub rest_density: f32,
     particles: Vec<Particle>,
+    /// One cell is `interaction_radius * 2.` by `interaction_radius * 2.`.
+    /// Cell `(0, 0)` starts from `(0., 0.)` to `(interaction_radius * 2., interaction_radius * 2.)`.
     cells: HashMap<(i32, i32), Vec<usize>>,
 }
 
@@ -130,6 +132,13 @@ impl Simulation {
 
     fn neighbors(&self, particle_index: usize) -> Vec<usize> {
         todo!()
+    }
+
+    fn get_cell_key(&self, position: Vec2) -> (i32, i32) {
+        (
+            (position.x / (self.interaction_radius * 2.)).floor() as i32,
+            (position.y / (self.interaction_radius * 2.)).floor() as i32,
+        )
     }
 
     fn add_to_cell(&mut self, index: usize, cell_key: (i32, i32)) {
