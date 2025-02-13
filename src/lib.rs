@@ -69,8 +69,10 @@ impl Simulation {
             let prev_cell = self.get_cell_key(particle.prev_pos);
             let curr_cell = self.get_cell_key(particle.pos);
 
-            if self.cells.contains_key(&prev_cell) { self.remove_from_cell(i, prev_cell); }
-            self.add_to_cell(i, curr_cell);
+            if prev_cell != curr_cell {
+                if self.cells.contains_key(&prev_cell) { self.remove_from_cell(i, prev_cell); }
+                self.add_to_cell(i, curr_cell);
+            }
 
             let particle = &mut self.particles[i];
 
