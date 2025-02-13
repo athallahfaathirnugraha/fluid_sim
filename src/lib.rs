@@ -89,10 +89,10 @@ impl Default for SimulationBuilder {
                 min: Vec2 { x: 0., y: 0. },
                 max: Vec2 { x: 0., y: 0. },
             },
-            interaction_radius: 100.,
-            pressure_multiplier: 30.,
-            near_pressure_multiplier: 30.,
-            rest_density: 30.,
+            interaction_radius: 40.,
+            pressure_multiplier: 45.,
+            near_pressure_multiplier: 45.,
+            rest_density: 9.,
             particles: vec![],
         }
     }
@@ -220,17 +220,6 @@ impl Simulation {
 
 impl Default for Simulation {
     fn default() -> Simulation {
-        Simulation {
-            gravity: 196.,
-            boundaries: Rect {
-                min: Vec2 { x: 0., y: 0. },
-                max: Vec2 { x: 0., y: 0. }
-            },
-            interaction_radius: 100.,
-            pressure_multiplier: 30.,
-            near_pressure_multiplier: 30.,
-            rest_density: 30.0,
-            particles: vec![],
-        }
+        SimulationBuilder::default().build()
     }
 }
