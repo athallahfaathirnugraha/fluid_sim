@@ -131,10 +131,52 @@ impl Simulation {
     fn neighbors(&self, particle_index: usize) -> Vec<usize> {
         todo!()
     }
+
+    fn add_to_cell(&mut self, index: usize, cell_key: (i32, i32)) {
+        match self.cells.get_mut(&cell_key) {
+            Some(cell) => { cell.push(index); }
+            None => { self.cells.insert(cell_key, vec![index]); }
+        }
+    }
+
+    fn remove_from_cell(&mut self, index: usize, cell_key: (i32, i32)) {
+        let cell = self.cells.get_mut(&cell_key).expect("empty cell");
+
+        for i in 0..cell.len() {
+            if cell[i] == index {
+                cell.swap_remove(i);
+                return;
+            }
+        }
+    }
 }
 
 impl Default for Simulation {
     fn default() -> Simulation {
         SimulationBuilder::default().build()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn add_to_cell() {
+        let mut simulation = Simulation::default();
+        simulation.add_to_cell(0, (0, 0));
+        assert_eq!(*simulation.cells.get(&(0, 0)).unwrap(), vec![0]);
+        simulation.add_to_cell(1, (0, 0));
+        assert_eq!(*simulation.cells.get(&(0, 0)).unwrap(), vec![0, 1]);
+    }
+
+    #[test]
+    fn remove_from_cell() {
+        let mut simulation = Simulation::default();
+        simulation.cells.insert((0, 0), vec![0, 1, 2, 3]);
+        simulation.remove_from_cell(1, (0, 0));
+        assert_eq!(*simulation.cells.get(&(0, 0)).unwrap(), vec![0, 3, 2]);
+        simulation.remove_from_cell(3, (0, 0));
+        assert_eq!(*simulation.cells.get(&(0, 0)).unwrap(), vec![0, 2]);
     }
 }
