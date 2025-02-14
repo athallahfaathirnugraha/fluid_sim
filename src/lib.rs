@@ -93,62 +93,66 @@ impl Simulation {
         let near_pressure_multiplier = self.near_pressure_multiplier;
         let rest_density = self.rest_density;
 
-        // TODO: loop over cells instead of particles??
-        
-        for i in 0..self.particles.len() {
-            let mut density = 0.;
-            let mut near_density = 0.;
+        for (cell, indices) in self.cells.iter() {
+            let neighbors = self.neighbors_from_cell(*cell);
+            
+            for &i in indices {
+                let mut density = 0.;
+                let mut near_density = 0.;
 
-            let neighbors = self.neighbors(i);
+                let neighbors = self.neighbors(i);
 
-            // compute density
-            for &j in &neighbors {
-                if i == j { continue; }
+                // compute density
+                for &j in &neighbors {
+                    if i == j { continue; }
 
-                let particle_i = self.particles[i];
-                let particle_j = self.particles[j];
+                    let particle_i = self.particles[i];
+                    let particle_j = self.particles[j];
 
-                let dist = Vec2::dist(particle_i.pos - particle_j.pos);
-                let q = dist / interaction_radius;
+                    let dist = Vec2::dist(particle_i.pos - particle_j.pos);
+                    let q = dist / interaction_radius;
 
-                if q < 1. {
-                    density += (1. - q) * (1. - q);
-                    near_density += (1. - q) * (1. - q) * (1. - q);
+                    if q < 1. {
+                        density += (1. - q) * (1. - q);
+                        near_density += (1. - q) * (1. - q) * (1. - q);
+                    }
                 }
-            }
 
-            // compute pressure
-            let pressure = pressure_multiplier * (density - rest_density);
-            let near_pressure = near_pressure_multiplier * near_density;
+                // compute pressure
+                let pressure = pressure_multiplier * (density - rest_density);
+                let near_pressure = near_pressure_multiplier * near_density;
 
-            let mut dpos = Vec2 { x: 0., y: 0. };
+                let mut dpos = Vec2 { x: 0., y: 0. };
 
-            for &j in &neighbors {
-                if i == j { continue; }
+                for &j in &neighbors {
+                    if i == j { continue; }
 
-                let particle_i = self.particles[i];
-                let particle_j = &mut self.particles[j];
+                    let particle_i = self.particles[i];
+                    let particle_j = &mut self.particles[j];
 
-                let diff = particle_j.pos - particle_i.pos;
-                let dist = Vec2::dist(diff);
-                let q = dist / interaction_radius;
+                    let diff = particle_j.pos - particle_i.pos;
+                    let dist = Vec2::dist(diff);
+                    let q = dist / interaction_radius;
 
-                if q < 1. {
-                    let displacement = diff.normalize() * (pressure * (1. - q) + near_pressure * (1. - q) * (1. - q)) * dt * dt;
-                    particle_j.pos += displacement / 2.;
-                    dpos -= displacement / 2.;
+                    if q < 1. {
+                        let displacement = diff.normalize() * (pressure * (1. - q) + near_pressure * (1. - q) * (1. - q)) * dt * dt;
+                        particle_j.pos += displacement / 2.;
+                        dpos -= displacement / 2.;
+                    }
                 }
-            }
 
-            self.particles[i].pos += dpos;
+                self.particles[i].pos += dpos;
+            }
         }
     }
 
     fn neighbors(&self, particle_index: usize) -> Vec<usize> {
-        let particle = self.particles[particle_index];
-        
+        let particle = self.particles[particle_index];        
         let cell = self.get_cell_key(particle.pos);
+        self.neighbors_from_cell(cell)
+    }
 
+    fn neighbors_from_cell(&self, cell: (i32, i32)) -> Vec<usize> {
         let cells = [
             (cell.0 - 1, cell.1 - 1),
             (cell.0 + 0, cell.1 - 1),
