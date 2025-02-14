@@ -64,6 +64,7 @@ impl Simulation {
         }
 
         for i in 0..self.particles.len() {
+            // update cells
             let particle = self.particles[i];
             
             let prev_cell = self.get_cell_key(particle.prev_pos);
@@ -74,6 +75,7 @@ impl Simulation {
                 self.add_to_cell(i, curr_cell);
             }
 
+            // update pos & prev_pos
             let particle = &mut self.particles[i];
 
             particle.prev_pos = particle.pos;
@@ -196,6 +198,8 @@ impl Simulation {
                 return;
             }
         }
+
+        panic!("no index in cell");
     }
 }
 
