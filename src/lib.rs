@@ -100,8 +100,6 @@ impl Simulation {
                 let mut density = 0.;
                 let mut near_density = 0.;
 
-                let neighbors = self.neighbors(i);
-
                 // compute density
                 for &j in &neighbors {
                     if i == j { continue; }
