@@ -92,14 +92,17 @@ impl Simulation {
         let pressure_multiplier = self.pressure_multiplier;
         let near_pressure_multiplier = self.near_pressure_multiplier;
         let rest_density = self.rest_density;
+
+        // TODO: loop over cells instead of particles??
         
         for i in 0..self.particles.len() {
             let mut density = 0.;
             let mut near_density = 0.;
 
-            // TODO: only neighbors
+            let neighbors = self.neighbors(i);
+
             // compute density
-            for j in 0..self.particles.len() {
+            for &j in &neighbors {
                 if i == j { continue; }
 
                 let particle_i = self.particles[i];
@@ -120,8 +123,7 @@ impl Simulation {
 
             let mut dpos = Vec2 { x: 0., y: 0. };
 
-            // TODO: only neighbors
-            for j in 0..self.particles.len() {
+            for &j in &neighbors {
                 if i == j { continue; }
 
                 let particle_i = self.particles[i];
@@ -143,7 +145,30 @@ impl Simulation {
     }
 
     fn neighbors(&self, particle_index: usize) -> Vec<usize> {
-        todo!()
+        let particle = self.particles[particle_index];
+        
+        let cell = self.get_cell_key(particle.pos);
+
+        let cells = [
+            (cell.0 - 1, cell.1 - 1),
+            (cell.0 + 0, cell.1 - 1),
+            (cell.0 + 1, cell.1 - 1),
+            (cell.0 - 1, cell.1 + 0),
+            (cell.0 + 0, cell.1 + 0),
+            (cell.0 + 1, cell.1 + 0),
+            (cell.0 - 1, cell.1 + 1),
+            (cell.0 + 0, cell.1 + 1),
+            (cell.0 + 1, cell.1 + 1),
+        ];
+
+        let mut res = vec![];
+        for cell in cells {
+            if let Some(indices) = self.cells.get(&cell) {
+                res.append(&mut indices.clone());
+            }
+        }
+
+        res
     }
 
     fn get_cell_key(&self, position: Vec2) -> (i32, i32) {
