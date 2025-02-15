@@ -81,12 +81,10 @@ impl eframe::App for MyEguiApp {
                         *builder = builder.with_particles(
                             positions
                                 .into_iter()
-                                .map(|pos| Particle {
-                                    pos: fluid_sim::Vec2 { x: pos.x, y: pos.y },
-                                    vel: fluid_sim::Vec2 { x: 0., y: 0. },
-                                    prev_pos: fluid_sim::Vec2 { x: 0., y: 0. },
-                                    cell_index: 0,
-                                })
+                                .map(|pos| Particle::new(
+                                    fluid_sim::Vec2 { x: pos.x, y: pos.y },
+                                    fluid_sim::Vec2 { x: 0., y: 0. },
+                                ))
                                 .collect(),
                         );
 
