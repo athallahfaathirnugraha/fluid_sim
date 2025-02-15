@@ -1,3 +1,5 @@
+// TODO: maybe its slow because of the rendering?
+
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Instant;
@@ -83,6 +85,7 @@ impl eframe::App for MyEguiApp {
                                     pos: fluid_sim::Vec2 { x: pos.x, y: pos.y },
                                     vel: fluid_sim::Vec2 { x: 0., y: 0. },
                                     prev_pos: fluid_sim::Vec2 { x: 0., y: 0. },
+                                    cell_index: 0,
                                 })
                                 .collect(),
                         );

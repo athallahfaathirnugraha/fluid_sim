@@ -197,24 +197,24 @@ impl Simulation {
         )
     }
 
+    // make sure not to add the same particle multiple times
     fn add_to_cell(&mut self, index: usize, cell_key: (i32, i32)) {
         match self.cells.get_mut(&cell_key) {
-            Some(cell) => { cell.push(index); }
-            None => { self.cells.insert(cell_key, vec![index]); }
+            Some(cell) => {
+                self.particles[index].cell_index = cell.len();
+                cell.push(index);
+            }
+            None => {
+                self.particles[index].cell_index = 0;
+                self.cells.insert(cell_key, vec![index]);
+            }
         }
     }
 
     fn remove_from_cell(&mut self, index: usize, cell_key: (i32, i32)) {
         let cell = self.cells.get_mut(&cell_key).expect("empty cell");
-
-        for i in 0..cell.len() {
-            if cell[i] == index {
-                cell.swap_remove(i);
-                return;
-            }
-        }
-
-        panic!("no index {} in cell {:#?}, cell: {:#?}", index, cell_key, cell);
+        self.particles[cell[cell.len() - 1]].cell_index = self.particles[index].cell_index;
+        cell.swap_remove(self.particles[index].cell_index);
     }
 }
 
