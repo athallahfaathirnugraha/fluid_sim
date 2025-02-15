@@ -1,6 +1,5 @@
 use crate::*;
 
-// like prev_pos & cell_index
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
     pub pos: Vec2,
