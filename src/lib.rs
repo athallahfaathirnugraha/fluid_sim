@@ -35,6 +35,11 @@ impl Simulation {
             let cell = self.get_cell_key(particle.pos);
             self.add_to_cell(i, cell);
         }
+
+        // set prev_pos to equal current pos
+        for particle in &mut self.particles {
+            particle.prev_pos = particle.pos;
+        }
     }
     
     pub fn with_particles(particles: Vec<Particle>) -> Simulation {
