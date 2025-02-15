@@ -54,7 +54,9 @@ impl Simulation {
     }
 
     pub fn step(&mut self, dt: f32) {
-        for particle in &mut self.particles {
+        for i in 0..self.particles.len() {
+            let particle = &mut self.particles[i];
+            
             if particle.pos.x < self.boundaries.min.x {
                 particle.pos.x = self.boundaries.min.x;
                 particle.vel.x *= -0.5;
@@ -76,9 +78,7 @@ impl Simulation {
             }
             
             particle.vel.y += self.gravity * dt;
-        }
 
-        for i in 0..self.particles.len() {
             // update cells
             let particle = self.particles[i];
             
