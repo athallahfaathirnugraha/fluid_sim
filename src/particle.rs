@@ -1,6 +1,5 @@
 use crate::*;
 
-// TODO: probably should create a constructor so user doesnt have to specify cache fields
 // like prev_pos & cell_index
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
