@@ -161,12 +161,6 @@ impl Simulation {
         }
     }
 
-    fn neighbors(&self, particle_index: usize) -> Vec<usize> {
-        let particle = self.particles[particle_index];        
-        let cell = self.get_cell_key(particle.pos);
-        self.neighbors_from_cell(cell)
-    }
-
     fn neighbors_from_cell(&self, cell: (i32, i32)) -> Vec<usize> {
         let cells = [
             (cell.0 - 1, cell.1 - 1),
