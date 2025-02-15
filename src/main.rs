@@ -87,7 +87,9 @@ impl eframe::App for MyEguiApp {
                                 .collect(),
                         );
 
-                        let arc_simulation = Arc::new(Mutex::new(builder.build()));
+                        let mut sim = builder.build();
+                        sim.init();
+                        let arc_simulation = Arc::new(Mutex::new(sim));
 
                         let (tx, rx) = mpsc::channel::<bool>();
                         let revert_state = self.clone();

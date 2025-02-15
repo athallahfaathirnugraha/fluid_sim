@@ -27,6 +27,16 @@ pub struct Simulation {
 }
 
 impl Simulation {
+    /// Must be called after building the simulation with `SimulationBuilder`.
+    pub fn init(&mut self) {
+        for i in 0..self.particles.len() {
+            // update cells
+            let particle = self.particles[i];
+            let cell = self.get_cell_key(particle.pos);
+            self.add_to_cell(i, cell);
+        }
+    }
+    
     pub fn with_particles(particles: Vec<Particle>) -> Simulation {
         Simulation {
             particles,
@@ -199,7 +209,7 @@ impl Simulation {
             }
         }
 
-        panic!("no index in cell");
+        panic!("no index {} in cell {:#?}, cell: {:#?}", index, cell_key, cell);
     }
 }
 
