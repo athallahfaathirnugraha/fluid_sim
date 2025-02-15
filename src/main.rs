@@ -66,10 +66,14 @@ impl eframe::App for MyEguiApp {
                     offset,
                     builder,
                 } => {
+                    ui.heading("particles");
+                    
                     ui.add(Slider::new(particle_num, 0..=800).text("particle num"));
                     ui.add(Slider::new(spacing, 0.0..=100.).text("spacing"));
                     ui.add(Slider::new(&mut offset.x, 0.0..=100.).text("x offset"));
                     ui.add(Slider::new(&mut offset.y, 0.0..=100.).text("y offset"));
+
+                    ui.heading("simulation settings");
 
                     ui.add(egui::Slider::new(&mut builder.interaction_radius, 0.0..=200.).text("interaction radius"));
                     ui.add(egui::Slider::new(&mut builder.pressure_multiplier, 0.0..=50.).text("pressure multiplier"));
@@ -153,11 +157,7 @@ impl eframe::App for MyEguiApp {
                     }
                 }
                 Simulate { simulation, stop_tx, revert_state } => {
-                    if ui.button("stop").clicked() {
-                        stop_tx.send(true).unwrap();
-                        *self = *revert_state.clone();
-                        return;
-                    }
+                    ui.heading("simulation settings");
 
                     let mut simulation = simulation.lock().unwrap();
 
@@ -166,6 +166,14 @@ impl eframe::App for MyEguiApp {
                     ui.add(egui::Slider::new(&mut simulation.near_pressure_multiplier, 0.0..=50.).text("near pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.rest_density, 0.0..=50.).text("rest density"));
                     ui.add(egui::Slider::new(&mut simulation.gravity, 0.0..=1000.).text("gravity"));
+
+                    drop(simulation);
+
+                    if ui.button("stop").clicked() {
+                        stop_tx.send(true).unwrap();
+                        *self = *revert_state.clone();
+                        return;
+                    }
                 },
             }
         });
