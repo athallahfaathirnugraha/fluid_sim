@@ -195,15 +195,6 @@ impl eframe::App for MyEguiApp {
             let painter_pos =
                 |pos: Pos2| pos2(pos.x + response.rect.min.x, pos.y + response.rect.min.y);
 
-            painter.debug_rect(
-                egui::Rect {
-                    min: painter_pos(pos2(0., 0.)),
-                    max: painter_pos(pos2(response.rect.width(), response.rect.height())),
-                },
-                Color32::GREEN,
-                "text",
-            );
-
             let interaction_diameter = match self {
                 Setup { builder, .. } => builder.interaction_radius,
                 Simulate { simulation, .. } => simulation.lock().unwrap().interaction_radius,
