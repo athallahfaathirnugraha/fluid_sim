@@ -29,16 +29,26 @@ pub struct Simulation {
 impl Simulation {
     /// Must be called after building the simulation with `SimulationBuilder`.
     pub fn init(&mut self) {
+        self.update_cells();
+        
+        // set prev_pos to equal current pos
+        for particle in &mut self.particles {
+            particle.prev_pos = particle.pos;
+        }
+    }
+
+    // clear all cells, then
+    // loops through all particles and puts them in the correct cell.
+    fn update_cells(&mut self) {
+        for (_, cell) in self.cells.iter_mut() {
+            *cell = vec![];
+        }
+        
         for i in 0..self.particles.len() {
             // update cells
             let particle = self.particles[i];
             let cell = self.get_cell_key(particle.pos);
             self.add_to_cell(i, cell);
-        }
-
-        // set prev_pos to equal current pos
-        for particle in &mut self.particles {
-            particle.prev_pos = particle.pos;
         }
     }
     
