@@ -16,7 +16,7 @@ use std::collections::HashMap;
 pub struct Simulation {
     pub gravity: f32,
     pub boundaries: Rect,
-    pub interaction_radius: f32,
+    interaction_radius: f32,
     pub pressure_multiplier: f32,
     pub near_pressure_multiplier: f32,
     pub rest_density: f32,
@@ -27,6 +27,9 @@ pub struct Simulation {
 }
 
 impl Simulation {
+    // TODO: maybe instead of setting prev_pos to current pos, we should
+    // change the cell_index field in Particle to Option<usize>?
+    
     /// Must be called after building the simulation with `SimulationBuilder`.
     pub fn init(&mut self) {
         self.update_cells();
@@ -37,15 +40,29 @@ impl Simulation {
         }
     }
 
+    pub fn interaction_radius(&self) -> f32 {
+        self.interaction_radius
+    }
+
+    pub fn set_interaction_radius(&mut self, new_interaction_radius: f32) {
+        self.interaction_radius = new_interaction_radius;
+        self.update_cells();
+
+        // set all prev_pos to current pos
+        for particle in &mut self.particles {
+            particle.prev_pos = particle.pos;
+        }
+    }
+
     // clear all cells, then
     // loops through all particles and puts them in the correct cell.
     fn update_cells(&mut self) {
         for (_, cell) in self.cells.iter_mut() {
-            *cell = vec![];
+            cell.clear();
         }
         
+        // update cells
         for i in 0..self.particles.len() {
-            // update cells
             let particle = self.particles[i];
             let cell = self.get_cell_key(particle.pos);
             self.add_to_cell(i, cell);

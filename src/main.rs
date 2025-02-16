@@ -160,8 +160,14 @@ impl eframe::App for MyEguiApp {
                     ui.heading("simulation settings");
 
                     let mut simulation = simulation.lock().unwrap();
+                    let mut interaction_radius = simulation.interaction_radius();
 
-                    ui.add(egui::Slider::new(&mut simulation.interaction_radius, 0.0..=200.).text("interaction radius"));
+                    ui.add(egui::Slider::new(&mut interaction_radius, 0.0..=200.).text("interaction radius"));
+
+                    if interaction_radius != simulation.interaction_radius() {
+                        simulation.set_interaction_radius(interaction_radius);
+                    }
+
                     ui.add(egui::Slider::new(&mut simulation.pressure_multiplier, 0.0..=50.).text("pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.near_pressure_multiplier, 0.0..=50.).text("near pressure multiplier"));
                     ui.add(egui::Slider::new(&mut simulation.rest_density, 0.0..=50.).text("rest density"));
@@ -197,7 +203,7 @@ impl eframe::App for MyEguiApp {
 
             let interaction_diameter = match self {
                 Setup { builder, .. } => builder.interaction_radius,
-                Simulate { simulation, .. } => simulation.lock().unwrap().interaction_radius,
+                Simulate { simulation, .. } => simulation.lock().unwrap().interaction_radius(),
             } * 2.;
 
             let mut x = 0;
