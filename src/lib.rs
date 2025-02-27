@@ -81,32 +81,34 @@ impl Simulation {
     }
 
     pub fn step(&mut self, dt: f32) {
-        for i in 0..self.particles.len() {
-            let particle = &mut self.particles[i];
-            
+        use rayon::prelude::*;
+
+        self.particles.par_iter_mut().for_each(|particle| {
             if particle.pos.x < self.boundaries.min.x {
                 particle.pos.x = self.boundaries.min.x;
                 particle.vel.x *= -0.5;
             }
-            
+        
             if particle.pos.x > self.boundaries.max.x {
                 particle.pos.x = self.boundaries.max.x;
                 particle.vel.x *= -0.5;
             }
-            
+        
             if particle.pos.y < self.boundaries.min.y {
                 particle.pos.y = self.boundaries.min.y;
                 particle.vel.y *= -0.5;
             }
-            
+        
             if particle.pos.y > self.boundaries.max.y {
                 particle.pos.y = self.boundaries.max.y;
                 particle.vel.y *= -0.5;
             }
-            
-            particle.vel.y += self.gravity * dt;
 
-            // update cells
+            particle.vel.y += self.gravity * dt;
+        });
+
+        // update cells
+        for i in 0..self.particles.len() {
             let particle = self.particles[i];
             
             let prev_cell = self.get_cell_key(particle.prev_pos);
@@ -116,13 +118,13 @@ impl Simulation {
                 if self.cells.contains_key(&prev_cell) { self.remove_from_cell(i, prev_cell); }
                 self.add_to_cell(i, curr_cell);
             }
+        }
 
-            // update pos & prev_pos
-            let particle = &mut self.particles[i];
-
+        // update pos & prev_pos
+        self.particles.par_iter_mut().for_each(|particle| {
             particle.prev_pos = particle.pos;
             particle.pos += particle.vel * dt;
-        }
+        });
 
         self.density_relaxation(dt);
 
